@@ -1,15 +1,19 @@
 import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
-import { connectMongoDB } from './db/connectMongoDB.js';
+import { connectMongoDB } from './db/connectToMongoDB.js';
 import cookieParser from 'cookie-parser';
 import { logger } from './middlewares/logger.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errors } from 'celebrate';
 import { errorHandler } from './middlewares/errorHandler.js';
+import { swaggerDocs } from './swagger/swagger.js';
+import swaggerUI from 'swagger-ui-express';
 
 const app = express();
-const PORT = process.env.PORT ?? 3030;
+const PORT = process.env.PORT ?? 3000;
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use(logger);
 app.use(express.json());
