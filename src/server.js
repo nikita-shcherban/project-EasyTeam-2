@@ -9,6 +9,7 @@ import { errors } from 'celebrate';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { swaggerDocs } from './swagger/swagger.js';
 import swaggerUI from 'swagger-ui-express';
+import rootRouter from './routes/index.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -20,8 +21,10 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 
+app.use(rootRouter);
+
 app.use(notFoundHandler);
-app.use(errors);
+app.use(errors());
 app.use(errorHandler);
 
 await connectMongoDB();
