@@ -38,7 +38,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['src/server.js'],
+  apis: ['src/**/*.js'],
 };
 
 export const swaggerDocs = swaggerJSDoc(swaggerOptions);
