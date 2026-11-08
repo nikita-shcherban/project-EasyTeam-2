@@ -4,8 +4,8 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
+      required: true,
       trim: true,
-      default: undefined,
     },
 
     email: {
@@ -24,11 +24,5 @@ const userSchema = new Schema(
   },
   { timestamps: true },
 );
-
-userSchema.pre('save', function () {
-  if (!this.username) {
-    this.username = this.email;
-  }
-});
 
 export const User = model('User', userSchema);
