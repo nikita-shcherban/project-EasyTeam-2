@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import { PHONE_VALIDATION_EXPRESSION } from '../constants';
 
 const userSchema = new Schema(
   {
@@ -8,11 +9,12 @@ const userSchema = new Schema(
       trim: true,
     },
 
-    email: {
+    phone: {
       type: String,
       required: true,
       unique: true,
       trim: true,
+      match: PHONE_VALIDATION_EXPRESSION,
     },
 
     password: {

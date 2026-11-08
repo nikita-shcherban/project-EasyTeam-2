@@ -4,18 +4,18 @@ import { User } from '../../models/user.js';
 import { createSession, setSessionCookies } from '../../services/auth.js';
 
 export const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, phone, password } = req.body;
 
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ phone });
   if (existingUser) {
-    throw createHttpError(400, 'Email in use');
+    throw createHttpError(409, 'Phone in use');
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({
     username,
-    email,
+    phone,
     password: hashedPassword,
   });
 
