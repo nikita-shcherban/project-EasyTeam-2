@@ -22,7 +22,6 @@ export const createFeedback = async (req, res) => {
     text,
   });
 
-  // додаємо відгук у товар
   good.feedbacks.push(feedback._id);
   await good.save();
 
