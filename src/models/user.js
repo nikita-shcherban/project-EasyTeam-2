@@ -17,11 +17,24 @@ const userSchema = new Schema(
       match: PHONE_VALIDATION_EXPRESSION,
     },
 
+    email: {
+      type: String,
+      trim: true,
+      unique: true,
+    },
+
     password: {
       type: String,
       required: true,
       minlength: 8,
       select: false,
+    },
+
+    role: {
+      type: String,
+      enum: ['User', 'Administrator'],
+      default: 'User',
+      required: true,
     },
   },
   { timestamps: true },
