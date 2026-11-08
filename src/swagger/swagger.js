@@ -59,6 +59,7 @@ export const swaggerDocs = swaggerJSDoc(swaggerOptions);
  *           minimum: 1
  *           default: 1
  *         description: Номер сторінки
+ *
  *       - in: query
  *         name: limit
  *         schema:
@@ -67,38 +68,46 @@ export const swaggerDocs = swaggerJSDoc(swaggerOptions);
  *           maximum: 50
  *           default: 12
  *         description: Кількість товарів на сторінці
+ *
  *       - in: query
  *         name: category
  *         schema:
  *           type: string
+ *           example: 665f12345678901234567890
  *         description: ObjectId категорії
+ *
  *       - in: query
  *         name: gender
  *         schema:
  *           type: string
  *           enum: [male, female, unisex]
  *         description: Стать
+ *
  *       - in: query
  *         name: size
  *         schema:
  *           type: string
  *           example: M
  *         description: Розмір (S, M, L, XL тощо)
+ *
  *       - in: query
  *         name: minPrice
  *         schema:
  *           type: number
  *         description: Мінімальна ціна
+ *
  *       - in: query
  *         name: maxPrice
  *         schema:
  *           type: number
  *         description: Максимальна ціна
+ *
  *       - in: query
  *         name: search
  *         schema:
  *           type: string
  *         description: Пошук по назві або опису
+ *
  *       - in: query
  *         name: sort
  *         schema:
@@ -106,6 +115,7 @@ export const swaggerDocs = swaggerJSDoc(swaggerOptions);
  *           enum: [price, -price, name, -name, createdAt, -createdAt]
  *           default: -createdAt
  *         description: Сортування (для ціни використовуй price / -price)
+ *
  *     responses:
  *       200:
  *         description: Успішна відповідь
@@ -122,14 +132,14 @@ export const swaggerDocs = swaggerJSDoc(swaggerOptions);
  *                   items:
  *                     type: object
  *                     properties:
- *                       id:
+ *                       _id:
  *                         type: string
  *                       name:
  *                         type: string
  *                       category:
  *                         type: object
  *                         properties:
- *                           id:
+ *                           _id:
  *                             type: string
  *                           name:
  *                             type: string
@@ -148,12 +158,22 @@ export const swaggerDocs = swaggerJSDoc(swaggerOptions);
  *                           type: string
  *                       gender:
  *                         type: string
+ *                         enum: [male, female, unisex]
  *                       description:
+ *                         type: string
+ *                       prevDescription:
  *                         type: string
  *                       characteristics:
  *                         type: array
  *                         items:
  *                           type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *
  *                 pagination:
  *                   type: object
  *                   properties:
@@ -161,7 +181,7 @@ export const swaggerDocs = swaggerJSDoc(swaggerOptions);
  *                       type: integer
  *                     limit:
  *                       type: integer
- *                     total:
+ *                     totalCount:
  *                       type: integer
  *                     totalPages:
  *                       type: integer
@@ -169,6 +189,7 @@ export const swaggerDocs = swaggerJSDoc(swaggerOptions);
  *                       type: boolean
  *                     hasPrevPage:
  *                       type: boolean
+ *
  *       500:
  *         description: Помилка сервера
  */
