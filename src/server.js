@@ -10,6 +10,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { swaggerDocs } from './swagger/swagger.js';
 import swaggerUI from 'swagger-ui-express';
 import goodsRoutes from './routes/api/goodsRoutes.js';
+import goodsRoutes from './routes/api/userRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 
+app.use(userRoutes);
 app.use(goodsRoutes);
 
 app.use(notFoundHandler);
