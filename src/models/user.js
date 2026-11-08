@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { PHONE_VALIDATION_EXPRESSION } from '../constants';
+import { PHONE_VALIDATION_EXPRESSION } from '../constants/formats.js';
 
 const userSchema = new Schema(
   {

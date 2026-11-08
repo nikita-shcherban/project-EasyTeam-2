@@ -1,5 +1,5 @@
 import { Segments, Joi } from 'celebrate';
-import { PHONE_VALIDATION_EXPRESSION } from '../constants';
+import { PHONE_VALIDATION_EXPRESSION } from '../constants/index.js';
 
 export const registerUserSchema = {
   [Segments.BODY]: Joi.object({
