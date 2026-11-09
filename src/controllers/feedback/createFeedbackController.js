@@ -32,7 +32,7 @@ export const createFeedback = async (req, res) => {
       success: true,
       data: feedback,
     });
-  // } catch (error) {
-  //   throw error;
-  // }
+  } catch (error) {
+    throw error;
+  }
 };
