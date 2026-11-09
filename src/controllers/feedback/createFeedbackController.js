@@ -4,7 +4,9 @@ import createHttpError from 'http-errors';
 import mongoose from 'mongoose';
 
 export const createFeedback = async (req, res) => {
-  const { goodId, author, rating, text } = req.body;
+  const { goodId } = req.params;
+  const { rating, text } = req.body;
+  const author = req.user._id;
 
   if (!mongoose.Types.ObjectId.isValid(goodId)) {
     throw createHttpError(400, 'Invalid goodId');
@@ -15,18 +17,22 @@ export const createFeedback = async (req, res) => {
     throw createHttpError(404, 'Good not found');
   }
 
-  const feedback = await Feedback.create({
-    good: goodId,
-    author,
-    rating,
-    text,
-  });
+  try {
+    const feedback = await Feedback.create({
+      good: goodId,
+      author,
+      rating,
+      text,
+    });
 
-  good.feedbacks.push(feedback._id);
-  await good.save();
+    good.feedbacks.push(feedback._id);
+    await good.save();
 
-  res.status(201).json({
-    success: true,
-    data: feedback,
-  });
+    res.status(201).json({
+      success: true,
+      data: feedback,
+    });
+  // } catch (error) {
+  //   throw error;
+  // }
 };
