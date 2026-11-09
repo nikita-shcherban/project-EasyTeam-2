@@ -13,44 +13,47 @@ const router = Router();
  *     description: Публічний ендпоінт для підписки на розсилку новин за email
  *     tags:
  *       - Subscriptions
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 example: user@example.com
- *                 description: Адреса електронної пошти
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         description: Дані для оформлення підписки
+ *         schema:
+ *           type: object
+ *           required:
+ *             - email
+ *           properties:
+ *             email:
+ *               type: string
+ *               format: email
+ *               example: user@example.com
+ *               description: Адреса електронної пошти
  *     responses:
  *       201:
  *         description: Підписку успішно оформлено
- *         content:
- *           application/json:
- *             schema:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: Підписку успішно оформлено
+ *             data:
  *               type: object
  *               properties:
- *                 message:
+ *                 _id:
  *                   type: string
- *                   example: Підписку успішно оформлено
- *                 data:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     email:
- *                       type: string
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
+ *                 email:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       400:
  *         description: Помилка валідації (некоректний або відсутній email)
  *       409:

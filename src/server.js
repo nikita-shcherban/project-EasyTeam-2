@@ -11,7 +11,6 @@ import { swaggerDocs } from './swagger/swagger.js';
 import swaggerUI from 'swagger-ui-express';
 import goodsRoutes from './routes/api/goodsRoutes.js';
 import categoryRoutes from './routes/api/categoryRoutes.js';
-import subscriptionRoutes from './routes/api/subscriptionRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -25,7 +24,6 @@ app.use(cookieParser());
 
 app.use(goodsRoutes);
 app.use(categoryRoutes);
-app.use(subscriptionRoutes);
 
 app.use(notFoundHandler);
 app.use(errors());
