@@ -2,34 +2,30 @@ import { Schema, model } from 'mongoose';
 
 const feedbackSchema = new Schema(
   {
+    good: {
+      type: Schema.Types.ObjectId,
+      ref: 'Good',
+      required: true,
+      index: true,
+    },
     author: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
-      trim: true,
+      index: true,
     },
-    date: {
-      type: String,
-      default: () => new Date().toISOString().split('T')[0],
-    },
-    description: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    rate: {
+    rating: {
       type: Number,
       required: true,
       min: 1,
       max: 5,
     },
-    category: {
+    text: {
       type: String,
-      default: '',
-    },
-    productId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Good',
-      default: null,
+      required: true,
+      trim: true,
+      minlength: 5,
+      maxlength: 1000,
     },
   },
   {
