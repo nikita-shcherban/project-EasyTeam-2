@@ -31,7 +31,7 @@ const router = Router();
  *         description: Unauthorized
  */
 router.patch(
-  '/update',
+  '/api/users/update',
   authenticate,
   celebrate(updateUserValidationSchema),
   updateUserController
