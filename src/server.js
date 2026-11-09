@@ -12,7 +12,6 @@ import swaggerUI from 'swagger-ui-express';
 import goodsRoutes from './routes/api/goodsRoutes.js';
 import categoryRoutes from './routes/api/categoryRoutes.js';
 
-
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
