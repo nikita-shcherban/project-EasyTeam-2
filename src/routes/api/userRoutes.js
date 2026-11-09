@@ -8,7 +8,7 @@ const router = Router();
 
 /**
  * @swagger
- * /api/users/update:
+ * /api/users/me:
  *   patch:
  *     tags:
  *       - Users
@@ -31,10 +31,10 @@ const router = Router();
  *         description: Unauthorized
  */
 router.patch(
-  '/api/users/update',
+  '/api/users/me',
   authenticate,
   celebrate(updateUserValidationSchema),
-  updateUserController
+  updateUserController,
 );
 
 export default router;

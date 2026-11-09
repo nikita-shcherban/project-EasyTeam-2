@@ -1,5 +1,5 @@
 import createHttpError from 'http-errors';
-import User from '../../models/user.js';
+import { User } from '../../models/user.js';
 
 export const updateUserController = async (req, res, next) => {
   try {

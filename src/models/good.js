@@ -41,12 +41,6 @@ const goodSchema = new Schema(
       index: true,
     },
     characteristics: [String],
-    feedbacks: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Feedback',
-      },
-    ],
   },
   {
     timestamps: true,
