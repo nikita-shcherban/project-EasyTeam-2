@@ -2,9 +2,12 @@ import { celebrate } from 'celebrate';
 import { Router } from 'express';
 import { registerUser } from '../../controllers/auth/registerController.js';
 import { registerUserSchema } from '../../validations/registerValidation.js';
-import { logoutController } from '../../controllers/auth/logoutController.js';
-import { refreshUserSession } from '../../controllers/auth/refreshUserSession.js';
-import { authenticate } from '../../middlewares/authenticate.js';
+import { logoutUser } from '../../controllers/auth/logoutController.js';
+import {
+  loginUser,
+  refreshUserSession,
+} from '../../controllers/auth/loginController.js';
+import { loginUserSchema } from '../../validations/loginValidation.js';
 
 const router = Router();
 
@@ -80,34 +83,77 @@ router.post('/api/auth/register', celebrate(registerUserSchema), registerUser);
 
 /**
  * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Log in with a phone number and password
+ *     description: Also available at /auth/login.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [phone, password]
+ *             properties:
+ *               phone:
+ *                 type: string
+ *                 example: "+380991234567"
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Returns the user without their password and sets session cookies.
+ *       400:
+ *         description: Invalid request body.
+ *       401:
+ *         description: Invalid credentials.
+ *       500:
+ *         description: Internal server error.
+ */
+router.post(
+  ['/auth/login', '/api/auth/login'],
+  celebrate(loginUserSchema),
+  loginUser,
+);
+
+/**
+ * @swagger
  * /api/auth/logout:
  *   post:
  *     summary: Logout user
- *     description: Logs out the authenticated user, deletes their session and clears authentication cookies.
+ *     description: Deletes the session and clears cookies without requiring an access token. Also available at /auth/logout.
  *     tags:
  *       - Auth
- *     security:
- *       - cookieAuth: []
  *     responses:
  *       204:
  *         description: Successfully logged out
- *       401:
- *         description: Unauthorized - user is not authenticated
  *       500:
  *         description: Internal server error
  */
-router.post('/api/auth/logout', authenticate, logoutController);
+router.post(['/auth/logout', '/api/auth/logout'], logoutUser);
 
 /**
  * @swagger
  * /api/auth/refresh:
  *   post:
  *     summary: Refresh user session
- *     description: Validates the current refresh token and session, creates a new session and updates authentication cookies.
+ *     description: Validates the refresh token and session, creates a new session and updates cookies. Also available at /auth/refresh.
  *     tags:
  *       - Auth
- *     security:
- *       - cookieAuth: []
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: cookie
+ *         name: refreshToken
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Session successfully refreshed. New authentication cookies are set.
@@ -141,6 +187,6 @@ router.post('/api/auth/logout', authenticate, logoutController);
  *       500:
  *         description: Internal server error.
  */
-router.post('/api/auth/refresh', refreshUserSession);
+router.post(['/auth/refresh', '/api/auth/refresh'], refreshUserSession);
 
 export default router;
