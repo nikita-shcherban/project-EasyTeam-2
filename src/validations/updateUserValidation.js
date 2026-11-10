@@ -12,5 +12,7 @@ export const updateUserValidationSchema = {
       'string.pattern.base': 'Invalid phone number format',
     }),
     city: Joi.string().trim().min(2).max(50),
-  }).min(1),
+  })
+    .min(1)
+    .required(),
 };
