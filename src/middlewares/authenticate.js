@@ -25,3 +25,27 @@ export const authenticate = async (req, res, next) => {
     next(error);
   }
 };
+
+export const optionalAuthenticate = async (req, res, next) => {
+  const { accessToken } = req.cookies ?? {};
+
+  if (typeof accessToken !== 'string' || !accessToken) {
+    return next();
+  }
+
+  const session = await Session.findOne({ accessToken });
+
+  if (!session || session.accessTokenValidUntil.getTime() <= Date.now()) {
+    return next();
+  }
+
+  const user = await User.findById(session.userId);
+
+  if (!user) {
+    return next();
+  }
+
+  req.user = user;
+
+  next();
+};

@@ -11,7 +11,6 @@ const feedbackSchema = new Schema(
     author: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
       index: true,
     },
     rating: {
@@ -22,10 +21,9 @@ const feedbackSchema = new Schema(
     },
     text: {
       type: String,
-      required: true,
       trim: true,
       minlength: 5,
-      maxlength: 1000,
+      maxlength: 500,
     },
   },
   {

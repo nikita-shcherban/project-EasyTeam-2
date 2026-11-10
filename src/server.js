@@ -16,6 +16,7 @@ import authRoutes from './routes/api/authRoutes.js';
 // import orderRoutes from './routes/api/orderRoutes.js';
 import subscriptionRoutes from './routes/api/subscriptionRoutes.js';
 import userRoutes from './routes/api/userRoutes.js';
+import { allowedOrigins } from './utils/allowedOrigins.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -24,7 +25,14 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use(logger);
 app.use(express.json());
-app.use(cors());
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }),
+);
+
 app.use(cookieParser());
 
 app.use(goodsRoutes);

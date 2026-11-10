@@ -8,7 +8,9 @@ export const createSubscriptionSchema = {
       'string.email': 'Введіть коректну адресу електронної пошти',
       'any.required': 'Email є обовʼязковим полем',
     }),
-  }).messages({
-    'object.unknown': 'Поле {#label} не дозволене',
-  }),
+  })
+    .required()
+    .messages({
+      'object.unknown': 'Поле {#label} не дозволене',
+    }),
 };
