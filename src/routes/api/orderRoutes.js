@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { celebrate } from 'celebrate';
 import { createOrderController } from '../../controllers/orders/createOrderController.js';
-import { orderValidation } from '../../validations/order.js';
+import { orderValidation } from '../../validations/orderValidation.js';
 
 const router = Router();
 
