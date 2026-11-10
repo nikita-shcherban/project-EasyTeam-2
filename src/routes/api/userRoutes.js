@@ -9,29 +9,23 @@ const router = Router();
 
 /**
  * @swagger
- * /api/users:
+ * /api/users/me:
  *   get:
  *     tags:
  *       - Users
  *     summary: Get the current user
- *     description: Returns the authenticated user without their password. Requires accessToken and sessionId cookies.
+ *     description: Returns the authenticated user without their password. Requires accessToken cookie.
  *     security:
  *       - cookieAuth: []
- *     parameters:
- *       - in: cookie
- *         name: sessionId
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Current user retrieved successfully.
  *       401:
- *         description: Missing credentials, expired access token, or session or user not found.
+ *         description: Missing access token, expired access token, or session or user not found.
  *       500:
  *         description: Internal server error.
  */
-router.get('/api/users', authenticate, getCurrentUserController);
+router.get('/api/users/me', authenticate, getCurrentUserController);
 
 /**
  * @swagger
@@ -41,7 +35,7 @@ router.get('/api/users', authenticate, getCurrentUserController);
  *       - Users
  *     summary: Update user data
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:

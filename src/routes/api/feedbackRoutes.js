@@ -2,7 +2,11 @@ import { Router } from 'express';
 import { celebrate } from 'celebrate';
 import { createFeedback } from '../../controllers/feedback/createFeedbackController.js';
 import { getFeedbacks } from '../../controllers/feedback/getFeedbacksController.js';
-import { createFeedbackValidation } from '../../validations/feedbackValidation.js';
+import {
+  createFeedbackValidation,
+  getFeedbacksValidation,
+} from '../../validations/feedbackValidation.js';
+import { optionalAuthenticate } from '../../middlewares/authenticate.js';
 
 const router = Router();
 
@@ -121,7 +125,7 @@ const router = Router();
  *       500:
  *         description: Internal server error
  */
-router.get('/api/feedbacks', getFeedbacks);
+router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
 
 /**
  * @swagger
@@ -206,6 +210,7 @@ router.get('/api/feedbacks', getFeedbacks);
  */
 router.post(
   '/api/:goodId/feedbacks',
+  optionalAuthenticate,
   celebrate(createFeedbackValidation),
   createFeedback,
 );

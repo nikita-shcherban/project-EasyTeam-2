@@ -6,7 +6,7 @@ import { Good } from '../../models/good.js';
 export const createFeedback = async (req, res) => {
   const { goodId } = req.params;
   const { rating, text } = req.body;
-  const author = req.user._id;
+  const author = req.user?._id || null;
 
   if (!mongoose.Types.ObjectId.isValid(goodId)) {
     throw createHttpError(400, 'Invalid goodId');
