@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { celebrate } from 'celebrate';
 import { createOrderController } from '../../controllers/orders/createOrderController.js';
 import { orderValidation } from '../../validations/orderValidation.js';
+import { authenticate } from '../../middlewares/authenticate.js';
+import { getUserOrders } from '../../controllers/orders/getUserOrdersController.js';
 
 const router = Router();
 
@@ -66,5 +68,7 @@ router.post(
   celebrate(orderValidation.createOrder),
   createOrderController,
 );
+
+router.get('/api/orders', authenticate, getUserOrders);
 
 export default router;
