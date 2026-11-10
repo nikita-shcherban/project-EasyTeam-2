@@ -13,7 +13,7 @@ import feedbackRoutes from './routes/api/feedbackRoutes.js';
 import goodsRoutes from './routes/api/goodsRoutes.js';
 import categoryRoutes from './routes/api/categoryRoutes.js';
 import authRoutes from './routes/api/authRoutes.js';
-// import orderRoutes from './routes/api/orderRoutes.js';
+import orderRoutes from './routes/api/orderRoutes.js';
 import subscriptionRoutes from './routes/api/subscriptionRoutes.js';
 import userRoutes from './routes/api/userRoutes.js';
 
@@ -31,7 +31,7 @@ app.use(goodsRoutes);
 app.use(categoryRoutes);
 app.use(feedbackRoutes);
 app.use(authRoutes);
-// app.use(orderRoutes);
+app.use(orderRoutes);
 app.use(subscriptionRoutes);
 app.use(userRoutes);
 
