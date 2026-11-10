@@ -7,6 +7,29 @@ const userSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      minlength: 2,
+      maxlength: 32,
+    },
+
+    name: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 32,
+    },
+
+    surname: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 32,
+    },
+
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     },
 
     phone: {
@@ -17,13 +40,10 @@ const userSchema = new Schema(
       match: PHONE_VALIDATION_EXPRESSION,
     },
 
-    email: {
+    city: {
       type: String,
-      unique: true,
-      sparse: true,
-      lowercase: true,
       trim: true,
-      default: undefined,
+      maxlength: 50,
     },
 
     password: {
@@ -41,6 +61,16 @@ const userSchema = new Schema(
     },
   },
   { timestamps: true, versionKey: false },
+);
+
+userSchema.index(
+  { email: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      email: { $type: 'string' },
+    },
+  },
 );
 
 userSchema.methods.toJSON = function () {

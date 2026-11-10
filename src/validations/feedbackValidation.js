@@ -6,6 +6,6 @@ export const createFeedbackValidation = {
   }),
   [Segments.BODY]: Joi.object({
     rating: Joi.number().integer().min(1).max(5).required(),
-    text: Joi.string().trim().max(1000),
+    text: Joi.string().trim().min(5).max(500),
   }),
 };

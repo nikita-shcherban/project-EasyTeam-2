@@ -6,5 +6,5 @@ export const registerUserSchema = {
     username: Joi.string().required(),
     phone: Joi.string().pattern(PHONE_VALIDATION_EXPRESSION).required(),
     password: Joi.string().min(8).required(),
-  }),
+  }).required(),
 };
