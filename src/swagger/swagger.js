@@ -2,10 +2,20 @@ import swaggerJSDoc from 'swagger-jsdoc';
 
 const swaggerOptions = {
   swaggerDefinition: {
+    openapi: '3.0.0',
     info: {
       title: 'EasyTeam Clothica API',
       description: 'API endpoints to Clothica Web Service',
       version: '1.0.0',
+    },
+    components: {
+      securitySchemes: {
+        cookieAuth: {
+          type: 'apiKey',
+          in: 'cookie',
+          name: 'accessToken',
+        },
+      },
     },
     tags: [
       {
@@ -38,7 +48,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['src/server.js'],
+  apis: ['src/**/*.js'],
 };
 
 export const swaggerDocs = swaggerJSDoc(swaggerOptions);
