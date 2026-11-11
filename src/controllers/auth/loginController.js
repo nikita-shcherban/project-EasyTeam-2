@@ -52,6 +52,7 @@ export const refreshUserSession = async (req, res) => {
 
   const result = await Session.deleteOne({ _id: session._id, refreshToken });
   if (!result.deletedCount) {
+    await Session.deleteOne({ _id: newSession._id });
     throw createHttpError(401, 'Session not found');
   }
 
