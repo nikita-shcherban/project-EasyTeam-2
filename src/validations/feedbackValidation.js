@@ -7,6 +7,7 @@ export const createFeedbackValidation = {
   [Segments.BODY]: Joi.object({
     rating: Joi.number().integer().min(1).max(5).required(),
     text: Joi.string().trim().min(5).max(500),
+    authorName: Joi.string().trim().min(2).max(32),
   }).required(),
 };
 

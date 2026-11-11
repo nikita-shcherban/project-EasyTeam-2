@@ -13,6 +13,10 @@ const feedbackSchema = new Schema(
       ref: 'User',
       index: true,
     },
+    authorName: {
+      type: String,
+      trim: true,
+    },
     rating: {
       type: Number,
       required: true,
