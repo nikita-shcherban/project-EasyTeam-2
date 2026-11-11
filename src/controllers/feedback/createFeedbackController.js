@@ -5,7 +5,7 @@ import { Good } from '../../models/good.js';
 
 export const createFeedback = async (req, res) => {
   const { goodId } = req.params;
-  const { rating, text } = req.body;
+  const { rating, text, authorName } = req.body;
   const author = req.user?._id || null;
 
   if (!mongoose.Types.ObjectId.isValid(goodId)) {
@@ -18,9 +18,14 @@ export const createFeedback = async (req, res) => {
     throw createHttpError(404, 'Good not found');
   }
 
+  if (!req.user && !authorName?.trim()) {
+    throw createHttpError(400, 'Guest name is required');
+  }
+
   const feedback = await Feedback.create({
     good: goodId,
     author,
+    authorName: author ? undefined : `Гість ${authorName}`,
     rating,
     text,
   });
