@@ -15,7 +15,10 @@ export const authenticate = async (req, res, next) => {
       throw createHttpError(401, 'Missing access token');
     }
 
-    const session = await Session.findOne({ accessToken });
+    const session = await Session.findOne({
+      _id: sessionId,
+      accessToken,
+    });
     if (!session) {
       throw createHttpError(401, 'Session not found');
     }
@@ -38,13 +41,16 @@ export const authenticate = async (req, res, next) => {
 };
 
 export const optionalAuthenticate = async (req, res, next) => {
-  const { accessToken } = req.cookies ?? {};
+  const { accessToken, sessionId } = req.cookies ?? {};
 
   if (typeof accessToken !== 'string' || !accessToken) {
     return next();
   }
 
-  const session = await Session.findOne({ accessToken });
+  const session = await Session.findOne({
+    _id: sessionId,
+    accessToken,
+  });
 
   if (!session || session.accessTokenValidUntil.getTime() <= Date.now()) {
     return next();
