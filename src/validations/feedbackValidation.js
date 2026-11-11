@@ -15,7 +15,7 @@ export const getFeedbacksValidation = {
     page: Joi.number().integer().min(1).default(1),
     limit: Joi.number().integer().min(1).max(50).default(10),
     goodId: Joi.string().hex().length(24),
-    category: Joi.string(),
+    category: Joi.string().hex().length(24),
     sort: Joi.string()
       .valid('rating', '-rating', 'createdAt', '-createdAt')
       .default('-createdAt'),
