@@ -43,7 +43,11 @@ export const authenticate = async (req, res, next) => {
 export const optionalAuthenticate = async (req, res, next) => {
   const { accessToken, sessionId } = req.cookies ?? {};
 
-  if (typeof accessToken !== 'string' || !accessToken) {
+  if (
+    typeof accessToken !== 'string' ||
+    !accessToken ||
+    !isObjectIdOrHexString(sessionId)
+  ) {
     return next();
   }
 
