@@ -12,7 +12,7 @@ export const authenticate = async (req, res, next) => {
       !accessToken ||
       !isObjectIdOrHexString(sessionId)
     ) {
-      throw createHttpError(401, 'Missing access token');
+      throw createHttpError(401, 'Missing or invalid credentials');
     }
 
     const session = await Session.findOne({
@@ -30,7 +30,7 @@ export const authenticate = async (req, res, next) => {
     const user = await User.findById(session.userId);
 
     if (!user) {
-      throw createHttpError(401);
+      throw createHttpError(401, 'User not found');
     }
 
     req.user = user;
@@ -42,27 +42,24 @@ export const authenticate = async (req, res, next) => {
 
 export const optionalAuthenticate = async (req, res, next) => {
   try {
-    const { accessToken } = req.cookies ?? {};
+    const { accessToken, sessionId } = req.cookies ?? {};
 
     if (typeof accessToken !== 'string' || !accessToken) {
       return next();
     }
 
-    const session = await Session.findOne({ accessToken });
-  const { accessToken, sessionId } = req.cookies ?? {};
+    if (
+      typeof accessToken !== 'string' ||
+      !accessToken ||
+      !isObjectIdOrHexString(sessionId)
+    ) {
+      return next();
+    }
 
-  if (
-    typeof accessToken !== 'string' ||
-    !accessToken ||
-    !isObjectIdOrHexString(sessionId)
-  ) {
-    return next();
-  }
-
-  const session = await Session.findOne({
-    _id: sessionId,
-    accessToken,
-  });
+    const session = await Session.findOne({
+      _id: sessionId,
+      accessToken,
+    });
 
     if (!session || session.accessTokenValidUntil.getTime() <= Date.now()) {
       return next();
