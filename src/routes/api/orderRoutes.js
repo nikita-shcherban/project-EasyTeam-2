@@ -1,7 +1,12 @@
 import { Router } from 'express';
 import { celebrate } from 'celebrate';
 import { createOrderController } from '../../controllers/orders/createOrderController.js';
-import { orderValidation } from '../../validations/orderValidation.js';
+import {
+  orderValidation,
+  updateOrderStatusSchema,
+} from '../../validations/orderValidation.js';
+import { updateOrderStatus } from '../../controllers/orders/updateOrderStatusController.js';
+import { checkAdmin } from '../../middlewares/admin.js';
 import { authenticate } from '../../middlewares/authenticate.js';
 import { getUserOrders } from '../../controllers/orders/getUserOrdersController.js';
 
@@ -70,5 +75,13 @@ router.post(
 );
 
 router.get('/api/orders', authenticate, getUserOrders);
+
+router.patch(
+  '/api/orders/:id/status',
+  authenticate,
+  checkAdmin,
+  celebrate(updateOrderStatusSchema),
+  updateOrderStatus,
+);
 
 export default router;

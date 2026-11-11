@@ -1,5 +1,6 @@
 import { Segments, Joi } from 'celebrate';
-import { ORDER_SIZES } from '../models/order.js';
+import { ORDER_SIZES, ORDER_STATUSES } from '../models/order.js';
+import { isValidObjectId } from 'mongoose';
 
 const PHONE_REGEX = /^\+380\d{9}$/;
 const OBJECT_ID_REGEX = /^[0-9a-fA-F]{24}$/;
@@ -86,4 +87,29 @@ export const orderValidation = {
         }),
     }),
   },
+};
+
+const validateObjectId = (value, helpers) => {
+  if (isValidObjectId(value)) {
+    return value;
+  }
+
+  return helpers.message('Invalid id format');
+};
+
+export const updateOrderStatusSchema = {
+  params: Joi.object({
+    id: Joi.string().custom(validateObjectId).required().messages({
+      'any.required': 'ID замовлення обов`язковий',
+    }),
+  }),
+  body: Joi.object({
+    status: Joi.string()
+      .valid(...ORDER_STATUSES)
+      .required()
+      .messages({
+        'any.only': `Статус має бути одним із наступних: ${ORDER_STATUSES.join(', ')}`,
+        'any.required': 'Поле статусу обов`язкове',
+      }),
+  }),
 };
