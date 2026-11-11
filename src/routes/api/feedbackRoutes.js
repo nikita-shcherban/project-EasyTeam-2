@@ -135,8 +135,6 @@ router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
  *     description: Creates a new feedback for the specified good. Requires authentication.
  *     tags:
  *       - Feedbacks
- *     security:
- *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: goodId
@@ -154,7 +152,6 @@ router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
  *             type: object
  *             required:
  *               - rating
- *               - text
  *             properties:
  *               rating:
  *                 type: integer

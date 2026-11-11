@@ -7,13 +7,21 @@ import { createSession, setSessionCookies } from '../../services/auth.js';
 
 export const loginUser = async (req, res) => {
   const { phone, password } = req.body;
+  const { sessionId } = req.cookies ?? {};
+
   const user = await User.findOne({ phone }).select('+password');
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
     throw createHttpError(401, 'Invalid credentials');
   }
 
-  await Session.deleteMany({ userId: user._id });
+  if (isObjectIdOrHexString(sessionId)) {
+    await Session.deleteOne({
+      _id: sessionId,
+      userId: user._id,
+    });
+  }
+
   const session = await createSession(user._id);
   setSessionCookies(res, session);
 

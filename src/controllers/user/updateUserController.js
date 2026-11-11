@@ -21,11 +21,12 @@ export const updateUserController = async (req, res, next) => {
     });
   } catch (error) {
     if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern ?? {})[0];
+
       return next(
-        createHttpError(409, 'Email or phone number is already in use'),
+        createHttpError(409, `${field || 'Field'} is already in use`),
       );
     }
-
     next(error);
   }
 };
