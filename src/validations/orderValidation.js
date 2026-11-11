@@ -22,7 +22,7 @@ const requiredString = (label, { min, max } = {}) => {
 
 // цену + название тут не принимаем их берет контроллер из БД по goodId
 const orderItemSchema = Joi.object({
-  goodId: Joi.string().pattern(OBJECT_ID_REGEX).required().messages({
+  goodId: Joi.string().trim().lowercase().pattern(OBJECT_ID_REGEX).required().messages({
     'any.required': 'goodId is required',
     'string.empty': 'goodId is required',
     'string.pattern.base': 'goodId must be a valid ObjectId',
@@ -85,6 +85,9 @@ export const orderValidation = {
           'array.unique':
             'Duplicate items: merge them into one with a bigger quantity',
         }),
+    }).required().messages({
+      'any.required': 'Request body is required',
+      'object.base': 'Request body must be an object',
     }),
   },
 };
@@ -111,5 +114,8 @@ export const updateOrderStatusSchema = {
         'any.only': `Статус має бути одним із наступних: ${ORDER_STATUSES.join(', ')}`,
         'any.required': 'Поле статусу обов`язкове',
       }),
+  }).required().messages({
+    'any.required': 'Request body is required',
+    'object.base': 'Request body must be an object',
   }),
 };
