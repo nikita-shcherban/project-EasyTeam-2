@@ -37,6 +37,12 @@ const router = Router();
  *           application/json:
  *             schema:
  *               type: object
+ *               required:
+ *                 - page
+ *                 - perPage
+ *                 - totalCategories
+ *                 - totalPages
+ *                 - categories
  *               properties:
  *                 page:
  *                   type: integer
@@ -53,14 +59,7 @@ const router = Router();
  *                 categories:
  *                   type: array
  *                   items:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                         example: 64f1a2b3c4d5e6f789012345
- *                       name:
- *                         type: string
- *                         example: Clothing
+ *                     $ref: '#/components/schemas/Category'
  *       500:
  *         description: Internal server error.
  */

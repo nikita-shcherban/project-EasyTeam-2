@@ -24,22 +24,7 @@ const router = Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - username
- *               - phone
- *               - password
- *             properties:
- *               username:
- *                 type: string
- *                 example: TestUser
- *               phone:
- *                 type: string
- *                 example: "+380991234567"
- *               password:
- *                 type: string
- *                 format: password
- *                 example: Password123
+ *             $ref: '#/components/schemas/RegisterRequest'
  *     responses:
  *       201:
  *         description: User successfully registered. Authentication cookies are set.
@@ -51,34 +36,14 @@ const router = Router();
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 _id:
- *                   type: string
- *                   example: 64f1a2b3c4d5e6f789012345
- *                 username:
- *                   type: string
- *                   example: TestUser
- *                 phone:
- *                   type: string
- *                   example: "+380991234567"
- *                 role:
- *                   type: string
- *                   example: User
- *                 createdAt:
- *                   type: string
- *                   format: date-time
- *                 updatedAt:
- *                   type: string
- *                   format: date-time
- *       409:
- *         description: Phone number is already in use.
+ *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Validation error.
+ *       409:
+ *         description: Phone number is already in use.
  *       500:
  *         description: Internal server error.
  */
-
 router.post('/api/auth/register', celebrate(registerUserSchema), registerUser);
 
 /**
@@ -94,18 +59,19 @@ router.post('/api/auth/register', celebrate(registerUserSchema), registerUser);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required: [phone, password]
- *             properties:
- *               phone:
- *                 type: string
- *                 example: "+380991234567"
- *               password:
- *                 type: string
- *                 format: password
+ *             $ref: '#/components/schemas/LoginRequest'
  *     responses:
  *       200:
  *         description: Returns the user without their password and sets session cookies.
+ *         headers:
+ *           Set-Cookie:
+ *             description: Sets accessToken, refreshToken and sessionId cookies.
+ *             schema:
+ *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Invalid request body.
  *       401:
@@ -147,11 +113,13 @@ router.post(['/auth/logout', '/api/auth/logout'], logoutUser);
  *       - in: cookie
  *         name: sessionId
  *         required: true
+ *         description: Current session ID.
  *         schema:
  *           type: string
  *       - in: cookie
  *         name: refreshToken
  *         required: true
+ *         description: Current refresh token.
  *         schema:
  *           type: string
  *     responses:
@@ -165,25 +133,13 @@ router.post(['/auth/logout', '/api/auth/logout'], logoutUser);
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Session refreshed
+ *               $ref: '#/components/schemas/MessageResponse'
  *       401:
  *         description: Session not found or refresh token expired.
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   examples:
- *                     sessionNotFound:
- *                       value: Session not found
- *                     sessionExpired:
- *                       value: Session token expired
+ *               $ref: '#/components/schemas/MessageResponse'
  *       500:
  *         description: Internal server error.
  */
