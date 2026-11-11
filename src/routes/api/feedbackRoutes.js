@@ -69,6 +69,10 @@ const router = Router();
  *           application/json:
  *             schema:
  *               type: object
+ *               required:
+ *                 - success
+ *                 - data
+ *                 - pagination
  *               properties:
  *                 success:
  *                   type: boolean
@@ -76,50 +80,9 @@ const router = Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                         example: 672a1b2c3d4e5f6789012346
- *                       good:
- *                         type: string
- *                         example: 672a1b2c3d4e5f6789012345
- *                       author:
- *                         type: string
- *                         example: 672a1b2c3d4e5f6789012347
- *                       rating:
- *                         type: integer
- *                         example: 5
- *                       text:
- *                         type: string
- *                         example: Very good quality!
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                       updatedAt:
- *                         type: string
- *                         format: date-time
+ *                     $ref: '#/components/schemas/Feedback'
  *                 pagination:
- *                   type: object
- *                   properties:
- *                     page:
- *                       type: integer
- *                       example: 1
- *                     limit:
- *                       type: integer
- *                       example: 10
- *                     totalCount:
- *                       type: integer
- *                       example: 25
- *                     totalPages:
- *                       type: integer
- *                       example: 3
- *                     hasNextPage:
- *                       type: boolean
- *                       example: true
- *                     hasPrevPage:
- *                       type: boolean
- *                       example: false
+ *                   $ref: '#/components/schemas/Pagination'
  *       400:
  *         description: Invalid goodId, category or sort field
  *       500:
@@ -139,28 +102,17 @@ router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
  *       - in: path
  *         name: goodId
  *         required: true
+ *         description: MongoDB ObjectId of the good
  *         schema:
  *           type: string
  *           pattern: '^[0-9a-fA-F]{24}$'
- *         description: MongoDB ObjectId of the good
- *         example: 672a1b2c3d4e5f6789012345
+ *           example: 672a1b2c3d4e5f6789012345
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - rating
- *             properties:
- *               rating:
- *                 type: integer
- *                 minimum: 1
- *                 maximum: 5
- *                 example: 5
- *               text:
- *                 type: string
- *                 example: Very good quality and fast delivery!
+ *             $ref: '#/components/schemas/CreateFeedbackRequest'
  *     responses:
  *       201:
  *         description: Feedback successfully created
@@ -168,34 +120,15 @@ router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
  *           application/json:
  *             schema:
  *               type: object
+ *               required:
+ *                 - success
+ *                 - data
  *               properties:
  *                 success:
  *                   type: boolean
  *                   example: true
  *                 data:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                       example: 672a1b2c3d4e5f6789012346
- *                     good:
- *                       type: string
- *                       example: 672a1b2c3d4e5f6789012345
- *                     author:
- *                       type: string
- *                       example: 672a1b2c3d4e5f6789012347
- *                     rating:
- *                       type: integer
- *                       example: 5
- *                     text:
- *                       type: string
- *                       example: Very good quality and fast delivery!
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
+ *                   $ref: '#/components/schemas/Feedback'
  *       400:
  *         description: Invalid goodId or validation error
  *       404:

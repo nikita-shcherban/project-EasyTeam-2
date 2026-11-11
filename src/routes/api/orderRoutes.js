@@ -7,7 +7,10 @@ import {
 } from '../../validations/orderValidation.js';
 import { updateOrderStatus } from '../../controllers/orders/updateOrderStatusController.js';
 import { checkAdmin } from '../../middlewares/admin.js';
-import { authenticate, optionalAuthenticate } from '../../middlewares/authenticate.js';
+import {
+  authenticate,
+  optionalAuthenticate,
+} from '../../middlewares/authenticate.js';
 import { getUserOrders } from '../../controllers/orders/getUserOrdersController.js';
 
 const router = Router();
@@ -25,48 +28,20 @@ const router = Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required: [firstName, lastName, phone, city, novaPoshtaBranch, items]
- *             properties:
- *               firstName:
- *                 type: string
- *                 example: Ivan
- *               lastName:
- *                 type: string
- *                 example: Petrenko
- *               phone:
- *                 type: string
- *                 example: "+380991234567"
- *               city:
- *                 type: string
- *                 example: Kyiv
- *               novaPoshtaBranch:
- *                 type: string
- *                 example: "12"
- *               comment:
- *                 type: string
- *               items:
- *                 type: array
- *                 items:
- *                   type: object
- *                   required: [goodId, size, quantity]
- *                   properties:
- *                     goodId:
- *                       type: string
- *                       example: 665f12345678901234567890
- *                     size:
- *                       type: string
- *                       example: M
- *                     quantity:
- *                       type: integer
- *                       example: 2
+ *             $ref: '#/components/schemas/CreateOrderRequest'
  *     responses:
  *       201:
  *         description: Замовлення створено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Order'
  *       400:
  *         description: Помилка валідації або недоступний розмір
  *       404:
  *         description: Товар не знайдено
+ *       500:
+ *         description: Внутрішня помилка сервера
  */
 router.post(
   '/api/orders',
@@ -91,18 +66,7 @@ router.post(
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 200
- *                 message:
- *                   type: string
- *                   example: User orders retrieved successfully
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Order'
+ *               $ref: '#/components/schemas/UserOrdersResponse'
  *       401:
  *         description: Необхідна авторизація
  *       500:
@@ -115,7 +79,7 @@ router.get('/api/orders', authenticate, getUserOrders);
  * /api/orders/{id}/status:
  *   patch:
  *     summary: Зміна статусу замовлення
- *     description: Змінювати статус замовлення можуть лише адміністратори
+ *     description: Змінювати статус замовлення можуть лише адміністратори.
  *     tags:
  *       - Orders
  *     security:
@@ -124,30 +88,24 @@ router.get('/api/orders', authenticate, getUserOrders);
  *       - in: path
  *         name: id
  *         required: true
+ *         description: ID замовлення
  *         schema:
  *           type: string
  *           pattern: '^[0-9a-fA-F]{24}$'
- *         description: ID замовлення
+ *           example: 665f12345678901234567890
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - status
- *             properties:
- *               status:
- *                 type: string
- *                 enum:
- *                   - pending
- *                   - processing
- *                   - shipped
- *                   - delivered
- *                   - cancelled
+ *             $ref: '#/components/schemas/UpdateOrderStatusRequest'
  *     responses:
  *       200:
  *         description: Статус замовлення успішно змінено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Order'
  *       400:
  *         description: Некоректний ID або статус
  *       401:
@@ -156,6 +114,8 @@ router.get('/api/orders', authenticate, getUserOrders);
  *         description: Недостатньо прав
  *       404:
  *         description: Замовлення не знайдено
+ *       500:
+ *         description: Внутрішня помилка сервера
  */
 router.patch(
   '/api/orders/:id/status',

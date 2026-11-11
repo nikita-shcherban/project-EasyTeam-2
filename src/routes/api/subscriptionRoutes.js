@@ -10,54 +10,29 @@ const router = Router();
  * /api/subscriptions:
  *   post:
  *     summary: Оформлення підписки на розсилку
- *     description: Публічний ендпоінт для підписки на розсилку новин за email
+ *     description: Публічний ендпоінт для підписки на розсилку новин за email.
  *     tags:
  *       - Subscriptions
  *     requestBody:
  *       required: true
- *       description: Дані для оформлення підписки
+ *       description: Дані для оформлення підписки.
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 example: user@example.com
- *                 description: Адреса електронної пошти
+ *             $ref: '#/components/schemas/CreateSubscriptionRequest'
  *     responses:
  *       201:
- *         description: Підписку успішно оформлено
+ *         description: Підписку успішно оформлено.
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Підписку успішно оформлено
- *                 data:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     email:
- *                       type: string
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
+ *               $ref: '#/components/schemas/SubscriptionResponse'
  *       400:
- *         description: Помилка валідації (некоректний або відсутній email)
+ *         description: Помилка валідації (некоректний або відсутній email).
  *       409:
- *         description: Ця електронна пошта вже підписана на розсилку
+ *         description: Ця електронна пошта вже підписана на розсилку.
  *       500:
- *         description: Помилка сервера
+ *         description: Внутрішня помилка сервера.
  */
 router.post(
   '/api/subscriptions',

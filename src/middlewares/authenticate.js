@@ -41,6 +41,14 @@ export const authenticate = async (req, res, next) => {
 };
 
 export const optionalAuthenticate = async (req, res, next) => {
+  try {
+    const { accessToken } = req.cookies ?? {};
+
+    if (typeof accessToken !== 'string' || !accessToken) {
+      return next();
+    }
+
+    const session = await Session.findOne({ accessToken });
   const { accessToken, sessionId } = req.cookies ?? {};
 
   if (
@@ -56,17 +64,20 @@ export const optionalAuthenticate = async (req, res, next) => {
     accessToken,
   });
 
-  if (!session || session.accessTokenValidUntil.getTime() <= Date.now()) {
-    return next();
+    if (!session || session.accessTokenValidUntil.getTime() <= Date.now()) {
+      return next();
+    }
+
+    const user = await User.findById(session.userId);
+
+    if (!user) {
+      return next();
+    }
+
+    req.user = user;
+
+    next();
+  } catch (error) {
+    next(error);
   }
-
-  const user = await User.findById(session.userId);
-
-  if (!user) {
-    return next();
-  }
-
-  req.user = user;
-
-  next();
 };

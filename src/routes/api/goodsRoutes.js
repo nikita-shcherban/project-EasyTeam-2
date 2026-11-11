@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import { getAllGoods } from '../../controllers/goods/getAllGoodsController.js';
 import { celebrate } from 'celebrate';
-import { getAllGoodsValidation } from '../../validations/goodsValidation.js';
+import {
+  getAllGoodsValidation,
+  getGoodByIdValidation,
+} from '../../validations/goodsValidation.js';
+import { getGoodByIdController } from '../../controllers/goods/getGoodByIdController.js';
 
 const router = Router();
 
@@ -35,6 +39,7 @@ const router = Router();
  *         name: category
  *         schema:
  *           type: string
+ *           pattern: '^[0-9a-fA-F]{24}$'
  *           example: 665f12345678901234567890
  *         description: ObjectId категорії
  *
@@ -50,18 +55,20 @@ const router = Router();
  *         schema:
  *           type: string
  *           example: M
- *         description: Розмір (S, M, L, XL тощо)
+ *         description: Розмір товару
  *
  *       - in: query
  *         name: minPrice
  *         schema:
  *           type: number
+ *           minimum: 0
  *         description: Мінімальна ціна
  *
  *       - in: query
  *         name: maxPrice
  *         schema:
  *           type: number
+ *           minimum: 0
  *         description: Максимальна ціна
  *
  *       - in: query
@@ -76,7 +83,7 @@ const router = Router();
  *           type: string
  *           enum: [price, -price, name, -name, createdAt, -createdAt]
  *           default: -createdAt
- *         description: Сортування (для ціни використовуй price / -price)
+ *         description: Сортування товарів
  *
  *     responses:
  *       200:
@@ -92,69 +99,56 @@ const router = Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                       name:
- *                         type: string
- *                       category:
- *                         type: object
- *                         properties:
- *                           _id:
- *                             type: string
- *                           name:
- *                             type: string
- *                       image:
- *                         type: string
- *                       price:
- *                         type: object
- *                         properties:
- *                           value:
- *                             type: number
- *                           currency:
- *                             type: string
- *                       size:
- *                         type: array
- *                         items:
- *                           type: string
- *                       gender:
- *                         type: string
- *                         enum: [male, female, unisex]
- *                       description:
- *                         type: string
- *                       prevDescription:
- *                         type: string
- *                       characteristics:
- *                         type: array
- *                         items:
- *                           type: string
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                       updatedAt:
- *                         type: string
- *                         format: date-time
- *
+ *                     $ref: '#/components/schemas/Good'
  *                 pagination:
- *                   type: object
- *                   properties:
- *                     page:
- *                       type: integer
- *                     limit:
- *                       type: integer
- *                     totalCount:
- *                       type: integer
- *                     totalPages:
- *                       type: integer
- *                     hasNextPage:
- *                       type: boolean
- *                     hasPrevPage:
- *                       type: boolean
- *
+ *                   $ref: '#/components/schemas/Pagination'
+ *       400:
+ *         description: Некоректні параметри запиту
  *       500:
  *         description: Помилка сервера
  */
+
 router.get('/api/goods', celebrate(getAllGoodsValidation), getAllGoods);
+
+/**
+ * @swagger
+ * /api/goods/{goodId}:
+ *   get:
+ *     summary: Отримання товару за ID
+ *     description: Отримує інформацію про конкретний товар за його ідентифікатором.
+ *     tags:
+ *       - Goods
+ *     parameters:
+ *       - in: path
+ *         name: goodId
+ *         required: true
+ *         description: MongoDB ObjectId товару
+ *         schema:
+ *           type: string
+ *           pattern: '^[0-9a-fA-F]{24}$'
+ *           example: 673a12345678901234567890
+ *     responses:
+ *       200:
+ *         description: Товар успішно знайдено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Good'
+ *       400:
+ *         description: Некоректний формат ID товару
+ *       404:
+ *         description: Товар не знайдено
+ */
+router.get(
+  '/api/goods/:goodId',
+  celebrate(getGoodByIdValidation),
+  getGoodByIdController,
+);
 
 export default router;
