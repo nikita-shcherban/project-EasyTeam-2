@@ -5,6 +5,10 @@ export const updateUserController = async (req, res, next) => {
   try {
     const userId = req.user._id;
 
+    if (req.body.name !== undefined) {
+      req.body.username = req.body.name;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
       new: true,
       runValidators: true,
