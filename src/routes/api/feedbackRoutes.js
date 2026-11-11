@@ -95,11 +95,9 @@ router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
  * /api/{goodId}/feedbacks:
  *   post:
  *     summary: Create feedback for a good
- *     description: Creates a new feedback for the specified good. Requires authentication.
+ *     description: Creates a new feedback for the specified good. Authentication is optional.
  *     tags:
  *       - Feedbacks
- *     security:
- *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: goodId
@@ -133,8 +131,6 @@ router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
  *                   $ref: '#/components/schemas/Feedback'
  *       400:
  *         description: Invalid goodId or validation error
- *       401:
- *         description: Unauthorized
  *       404:
  *         description: Good not found
  *       500:

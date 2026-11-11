@@ -7,13 +7,21 @@ import { createSession, setSessionCookies } from '../../services/auth.js';
 
 export const loginUser = async (req, res) => {
   const { phone, password } = req.body;
+  const { sessionId } = req.cookies ?? {};
+
   const user = await User.findOne({ phone }).select('+password');
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
     throw createHttpError(401, 'Invalid credentials');
   }
 
-  await Session.deleteMany({ userId: user._id });
+  if (isObjectIdOrHexString(sessionId)) {
+    await Session.deleteOne({
+      _id: sessionId,
+      userId: user._id,
+    });
+  }
+
   const session = await createSession(user._id);
   setSessionCookies(res, session);
 
@@ -40,13 +48,14 @@ export const refreshUserSession = async (req, res) => {
     throw createHttpError(401, 'Session token expired');
   }
 
-  // Only one request may consume this session and create its replacement.
+  const newSession = await createSession(session.userId);
+
   const result = await Session.deleteOne({ _id: session._id, refreshToken });
   if (!result.deletedCount) {
+    await Session.deleteOne({ _id: newSession._id });
     throw createHttpError(401, 'Session not found');
   }
 
-  const newSession = await createSession(session.userId);
   setSessionCookies(res, newSession);
 
   res.status(200).json({ message: 'Session refreshed' });
