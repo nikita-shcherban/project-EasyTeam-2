@@ -13,14 +13,22 @@ export const registerUser = async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = await User.create({
-    username,
-    phone,
-    password: hashedPassword,
-  });
+  try {
+    const newUser = await User.create({
+      username,
+      phone,
+      password: hashedPassword,
+    });
 
-  const newSession = await createSession(newUser._id);
-  setSessionCookies(res, newSession);
+    const newSession = await createSession(newUser._id);
+    setSessionCookies(res, newSession);
 
-  res.status(201).json(newUser);
+    return res.status(201).json(newUser);
+  } catch (error) {
+    if (error.code === 11000) {
+      throw createHttpError(409, 'Phone already in use');
+    }
+
+    throw error;
+  }
 };

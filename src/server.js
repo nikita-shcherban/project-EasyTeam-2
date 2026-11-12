@@ -9,8 +9,14 @@ import { errors } from 'celebrate';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { swaggerDocs } from './swagger/swagger.js';
 import swaggerUI from 'swagger-ui-express';
+import feedbackRoutes from './routes/api/feedbackRoutes.js';
 import goodsRoutes from './routes/api/goodsRoutes.js';
 import categoryRoutes from './routes/api/categoryRoutes.js';
+import authRoutes from './routes/api/authRoutes.js';
+import orderRoutes from './routes/api/orderRoutes.js';
+import subscriptionRoutes from './routes/api/subscriptionRoutes.js';
+import userRoutes from './routes/api/userRoutes.js';
+import { allowedOrigins } from './utils/allowedOrigins.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -19,11 +25,23 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use(logger);
 app.use(express.json());
-app.use(cors());
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }),
+);
+
 app.use(cookieParser());
 
 app.use(goodsRoutes);
 app.use(categoryRoutes);
+app.use(feedbackRoutes);
+app.use(authRoutes);
+app.use(orderRoutes);
+app.use(subscriptionRoutes);
+app.use(userRoutes);
 
 app.use(notFoundHandler);
 app.use(errors());

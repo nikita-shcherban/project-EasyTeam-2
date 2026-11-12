@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 import { Good } from '../../models/good.js';
 
-export const getGoodById = async (req, res) => {
+export const getGoodByIdController = async (req, res) => {
   const { goodId } = req.params;
   const good = await Good.findById(goodId);
 
@@ -9,5 +9,5 @@ export const getGoodById = async (req, res) => {
     throw createHttpError(404, 'Good not found');
   }
 
-  res.status(200).json(good);
+  res.status(200).json({ success: true, data: good });
 };
