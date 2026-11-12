@@ -25,9 +25,3 @@ export const getAllGoodsValidation = {
     return value;
   }),
 };
-
-export const getGoodByIdValidation = {
-  [Segments.PARAMS]: Joi.object({
-    goodId: Joi.string().hex().length(24).required(),
-  }),
-};
