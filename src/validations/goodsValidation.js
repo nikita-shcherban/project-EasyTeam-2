@@ -12,6 +12,7 @@ export const getAllGoodsValidation = {
       Joi.array().items(
         Joi.string().valid('XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'),
       ),
+    ),
     minPrice: Joi.number().min(0),
     maxPrice: Joi.number().min(0),
     search: Joi.string().trim().allow(''),
