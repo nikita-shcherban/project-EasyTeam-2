@@ -1,4 +1,5 @@
 import { Good } from '../../models/good.js';
+import { Feedback } from '../../models/feedback.js';
 import '../../models/category.js';
 import mongoose from 'mongoose';
 import createHttpError from 'http-errors';
@@ -65,11 +66,27 @@ export const getAllGoods = async (req, res) => {
       Good.countDocuments(filter),
     ]);
 
+    const ids = goods.map((g) => g._id);
+    const stats = await Feedback.aggregate([
+      { $match: { good: { $in: ids } } },
+      { $group: { _id: '$good', rating: { $avg: '$rating' }, feedbacksCount: { $sum: 1 } } },
+    ]);
+    const statsById = new Map(stats.map((s) => [String(s._id), s]));
+    
+    const data = goods.map((g) => {
+      const s = statsById.get(String(g._id));
+      return {
+        ...g,
+        rating: s ? Math.round(s.rating * 10) / 10 : 0,
+        feedbacksCount: s ? s.feedbacksCount : 0,
+      };
+    });
+
     const totalPages = Math.ceil(totalCount / limitNumber);
 
     res.json({
       success: true,
-      data: goods,
+      data,
       pagination: {
         page: pageNumber,
         limit: limitNumber,
