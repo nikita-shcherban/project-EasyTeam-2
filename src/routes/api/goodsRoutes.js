@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import { getAllGoods } from '../../controllers/goods/getAllGoodsController.js';
+import { getGoodByIdController } from '../../controllers/goods/getGoodByIdController.js';
 import { celebrate } from 'celebrate';
 import {
   getAllGoodsValidation,
+  getGoodByIdValidation,
 } from '../../validations/goodsValidation.js';
 const router = Router();
 
@@ -107,5 +109,45 @@ const router = Router();
 
 router.get('/api/goods', celebrate(getAllGoodsValidation), getAllGoods);
 
+/**
+ * @swagger
+ * /api/goods/{goodId}:
+ *   get:
+ *     summary: Отримання товару за ID
+ *     description: Отримує інформацію про конкретний товар за його ідентифікатором.
+ *     tags:
+ *       - Goods
+ *     parameters:
+ *       - in: path
+ *         name: goodId
+ *         required: true
+ *         description: MongoDB ObjectId товару
+ *         schema:
+ *           type: string
+ *           pattern: '^[0-9a-fA-F]{24}$'
+ *           example: 673a12345678901234567890
+ *     responses:
+ *       200:
+ *         description: Товар успішно знайдено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Good'
+ *       400:
+ *         description: Некоректний формат ID товару
+ *       404:
+ *         description: Товар не знайдено
+ */
+router.get(
+  '/api/goods/:goodId',
+  celebrate(getGoodByIdValidation),
+  getGoodByIdController,
+);
 
 export default router;
