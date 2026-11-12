@@ -30,7 +30,8 @@ export const getAllGoods = async (req, res) => {
       filter.gender = gender;
     }
     if (size) {
-      filter.size = size;
+      const sizes = Array.isArray(size) ? size : [size];
+      filter.size = { $in: sizes };
     }
     if (minPrice !== undefined || maxPrice !== undefined) {
       filter['price.value'] = {};
