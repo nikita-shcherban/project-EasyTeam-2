@@ -46,15 +46,13 @@ export const getAllGoods = async (req, res) => {
       ];
     }
     // Sorting
-    const sortOption = {};
     const sortField = sort.startsWith('-') ? sort.slice(1) : sort;
     const sortOrder = sort.startsWith('-') ? -1 : 1;
 
-    if (sortField === 'price') {
-      sortOption['price.value'] = sortOrder;
-    } else {
-      sortOption[sortField] = sortOrder;
-    }
+    const sortOption = {
+      [sortField === 'price' ? 'price.value' : sortField]: sortOrder,
+      _id: sortOrder, // уникальный ключ: порядок стабилен между страницами
+    };
     // Query
     const [goods, totalCount] = await Promise.all([
       Good.find(filter)
