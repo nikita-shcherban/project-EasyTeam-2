@@ -7,7 +7,11 @@ export const getAllGoodsValidation = {
     limit: Joi.number().integer().min(1).max(50).default(12),
     category: Joi.string().hex().length(24),
     gender: Joi.string().valid('male', 'female', 'unisex'),
-    size: Joi.string().trim(),
+    size: Joi.alternatives().try(
+      Joi.string().valid('XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'),
+      Joi.array().items(
+        Joi.string().valid('XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'),
+      ),
     minPrice: Joi.number().min(0),
     maxPrice: Joi.number().min(0),
     search: Joi.string().trim().allow(''),
