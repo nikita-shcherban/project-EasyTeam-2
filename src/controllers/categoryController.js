@@ -1,14 +1,16 @@
 import { Category } from '../models/category.js';
 
 export const getAllCategories = async (req, res) => {
-  const { page = 1, perPage = 6 } = req.query;
+  const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+  const perPage = Math.max(
+    1,
+    Number.parseInt(req.query.perPage, 10) || 6,
+  );
 
   const skip = (page - 1) * perPage;
 
-  const categoryQuery = Category.find();
-
   const [categories, totalCategories] = await Promise.all([
-    categoryQuery.skip(skip).limit(perPage),
+    Category.find().skip(skip).limit(perPage),
     Category.countDocuments(),
   ]);
 
