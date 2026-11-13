@@ -34,6 +34,7 @@ components:
           type: array
           items:
             type: string
+            enum: [XXS, XS, S, M, L, XL, XXL]
           example: [S, M, L, XL]
         description:
           type: string
@@ -43,13 +44,21 @@ components:
           example: Previous product description
         gender:
           type: string
-          enum: [male, female, unisex]
-          example: male
+          enum: [men, women, unisex]
+          example: men
         characteristics:
           type: array
           items:
             type: string
           example: [Cotton, Oversize]
+        rating:
+          type: number
+          description: Середня оцінка за відгуками (0, якщо відгуків немає). Повертається у списку товарів.
+          example: 4.5
+        feedbacksCount:
+          type: integer
+          description: Кількість відгуків. Повертається у списку товарів.
+          example: 2
         createdAt:
           type: string
           format: date-time
@@ -93,6 +102,10 @@ components:
           type: string
           description: ID автора відгуку
           example: 673a12345678901234567893
+        authorName:
+          type: string
+          description: Ім'я автора (для гостей)
+          example: Nikita
         rating:
           type: integer
           minimum: 1
@@ -181,7 +194,7 @@ components:
           example: Ivanov
         phone:
           type: string
-          pattern: '^\\+380\\d{9}$'
+          pattern: '^\+380\d{9}$'
           example: '+380991234567'
         city:
           type: string
