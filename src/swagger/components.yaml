@@ -3,7 +3,7 @@ components:
     # -------------------------
     # GOOD
     # -------------------------
-    Good:
+     Good:
       type: object
       properties:
         _id:
@@ -11,12 +11,12 @@ components:
           example: 673a12345678901234567890
         name:
           type: string
-          example: Men's T-shirt
+          example: Худі 'Soft Line White'
         category:
           $ref: '#/components/schemas/Category'
         image:
           type: string
-          example: https://example.com/image.jpg
+          example: https://example.com/image.webp
         price:
           type: object
           required:
@@ -25,7 +25,7 @@ components:
             value:
               type: number
               minimum: 0
-              example: 1200
+              example: 1499
             currency:
               type: string
               default: грн
@@ -38,26 +38,26 @@ components:
           example: [S, M, L, XL]
         description:
           type: string
-          example: Comfortable cotton T-shirt
+          example: Класичне біле худі з бавовни
         prevDescription:
           type: string
-          example: Previous product description
+          example: Короткий опис товару
         gender:
           type: string
           enum: [man, women, unisex]
-          example: men
+          example: unisex
         characteristics:
           type: array
           items:
             type: string
-          example: [Cotton, Oversize]
+          example: ['Матеріал: 100% бавовна', 'Крій: вільний']
         rating:
           type: number
           description: Середня оцінка за відгуками (0, якщо відгуків немає). Повертається у списку товарів.
           example: 4.5
         feedbacksCount:
           type: integer
-          description: Кількість відгуків. Повертається у списку товарів.
+          description: Кількість відгуків (0, якщо їх немає). Повертається у списку товарів.
           example: 2
         createdAt:
           type: string

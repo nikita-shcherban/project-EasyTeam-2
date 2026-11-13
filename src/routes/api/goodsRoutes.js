@@ -42,14 +42,14 @@ const router = Router();
  *           example: 665f12345678901234567890
  *         description: ObjectId категорії
  *
- *        - in: query
+ *       - in: query
  *         name: gender
  *         schema:
  *           type: string
  *           enum: [man, women, unisex]
  *         description: Стать
  *
- *        - in: query
+ *       - in: query
  *         name: size
  *         description: Розмір товару. Можна вказати кілька значень (size=M&size=L)
  *         style: form
