@@ -32,7 +32,9 @@ export const getAllGoods = async (req, res) => {
     }
     if (size) {
       const sizes = Array.isArray(size) ? size : [size];
-      filter.size = { $in: sizes };
+      filter.size = {
+        $in: sizes.map((s) => new RegExp(`(^|[,\\s])${s}([,\\s]|$)`, 'i')),
+      };
     }
     if (minPrice !== undefined || maxPrice !== undefined) {
       filter['price.value'] = {};
