@@ -6,7 +6,7 @@ export const getAllGoodsValidation = {
     page: Joi.number().integer().min(1).default(1),
     limit: Joi.number().integer().min(1).max(50).default(12),
     category: Joi.string().hex().length(24),
-    gender: Joi.string().valid('men', 'women', 'unisex'),
+    gender: Joi.string().valid('man', 'women', 'unisex'),
     size: Joi.alternatives().try(
       Joi.string().valid('XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'),
       Joi.array().items(

@@ -37,7 +37,7 @@ const goodSchema = new Schema(
     prevDescription: String,
     gender: {
       type: String,
-      enum: ['men', 'women', 'unisex'],
+      enum: ['man', 'women', 'unisex'],
       index: true,
     },
     characteristics: [String],
