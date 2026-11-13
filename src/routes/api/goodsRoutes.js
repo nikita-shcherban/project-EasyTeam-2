@@ -46,7 +46,7 @@ const router = Router();
  *         name: gender
  *         schema:
  *           type: string
- *           enum: [men, women, unisex]
+ *           enum: [man, women, unisex]
  *         description: Стать
  *
  *        - in: query

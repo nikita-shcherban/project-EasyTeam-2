@@ -44,7 +44,7 @@ components:
           example: Previous product description
         gender:
           type: string
-          enum: [men, women, unisex]
+          enum: [man, women, unisex]
           example: men
         characteristics:
           type: array
