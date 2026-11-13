@@ -34,6 +34,12 @@ const goodSchema = new Schema(
       },
     ],
     description: String,
+    feedbacks: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Feedback',
+      },
+    ],
     prevDescription: String,
     gender: {
       type: String,

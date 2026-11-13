@@ -17,10 +17,12 @@ export const getAllGoods = async (req, res) => {
       search,
       sort = '-createdAt',
     } = req.query;
+
     // Pagination
     const pageNumber = Math.max(1, parseInt(page, 10) || 1);
     const limitNumber = Math.min(50, Math.max(1, parseInt(limit, 10) || 12));
     const skip = (pageNumber - 1) * limitNumber;
+
     // Filtering
     const filter = {};
 
@@ -32,9 +34,7 @@ export const getAllGoods = async (req, res) => {
     }
     if (size) {
       const sizes = Array.isArray(size) ? size : [size];
-      filter.size = {
-        $in: sizes.map((s) => new RegExp(`(^|[,\\s])${s}([,\\s]|$)`, 'i')),
-      };
+      filter.size = { $in: sizes };
     }
     if (minPrice !== undefined || maxPrice !== undefined) {
       filter['price.value'] = {};
@@ -48,14 +48,16 @@ export const getAllGoods = async (req, res) => {
         { prevDescription: { $regex: search, $options: 'i' } },
       ];
     }
-    // Sorting
+
+    // Sorting (_id как второй ключ делает порядок стабильным между страницами)
     const sortField = sort.startsWith('-') ? sort.slice(1) : sort;
     const sortOrder = sort.startsWith('-') ? -1 : 1;
 
     const sortOption = {
       [sortField === 'price' ? 'price.value' : sortField]: sortOrder,
-      _id: sortOrder, // уникальный ключ: порядок стабилен между страницами
+      _id: sortOrder,
     };
+
     // Query
     const [goods, totalCount] = await Promise.all([
       Good.find(filter)
@@ -68,13 +70,33 @@ export const getAllGoods = async (req, res) => {
       Good.countDocuments(filter),
     ]);
 
+    // Рейтинг и количество отзывов для товаров текущей страницы.
+    // Поддерживает оба формата отзывов:
+    //  - из API:  { good, rating }
+    //  - из seed: { productId, rate }
     const ids = goods.map((g) => g._id);
     const stats = await Feedback.aggregate([
-      { $match: { good: { $in: ids } } },
-      { $group: { _id: '$good', rating: { $avg: '$rating' }, feedbacksCount: { $sum: 1 } } },
+      {
+        $match: {
+          $or: [{ good: { $in: ids } }, { productId: { $in: ids } }],
+        },
+      },
+      {
+        $addFields: {
+          goodRef: { $ifNull: ['$good', '$productId'] },
+          score: { $ifNull: ['$rating', '$rate'] },
+        },
+      },
+      {
+        $group: {
+          _id: '$goodRef',
+          rating: { $avg: '$score' },
+          feedbacksCount: { $sum: 1 },
+        },
+      },
     ]);
     const statsById = new Map(stats.map((s) => [String(s._id), s]));
-    
+
     const data = goods.map((g) => {
       const s = statsById.get(String(g._id));
       return {
