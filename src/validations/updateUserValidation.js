@@ -12,6 +12,7 @@ export const updateUserValidationSchema = {
       'string.pattern.base': 'Invalid phone number format',
     }),
     city: Joi.string().trim().min(2).max(50),
+    novaPoshtaBranch: Joi.string().trim().max(50),
   })
     .min(1)
     .required(),
