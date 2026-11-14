@@ -45,6 +45,11 @@ const userSchema = new Schema(
       trim: true,
       maxlength: 50,
     },
+    novaPoshtaBranch: {
+      type: String,
+      trim: true,
+      maxlength: 50,
+    },
 
     password: {
       type: String,
