@@ -82,46 +82,6 @@ components:
     # -------------------------
     # FEEDBACK
     # -------------------------
-    Feedback:
-      type: object
-      required:
-        - _id
-        - good
-        - rating
-        - createdAt
-        - updatedAt
-      properties:
-        _id:
-          type: string
-          example: 673a12345678901234567892
-        good:
-          type: string
-          description: ID товару
-          example: 673a12345678901234567890
-        author:
-          type: string
-          description: ID автора відгуку
-          example: 673a12345678901234567893
-        authorName:
-          type: string
-          description: Ім'я автора (для гостей)
-          example: Nikita
-        rating:
-          type: integer
-          minimum: 1
-          maximum: 5
-          example: 5
-        text:
-          type: string
-          minLength: 5
-          maxLength: 500
-          example: Very good product!
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
     CreateFeedbackRequest:
       type: object
       required:
@@ -134,15 +94,51 @@ components:
           example: 5
         text:
           type: string
-          minLength: 5
-          maxLength: 500
-          example: Чудовий товар!
+          example: Great product, highly recommend!
         authorName:
           type: string
-          minLength: 2
-          maxLength: 32
-          example: Nikita
-          description: Required for unauthenticated users.
+          description: Required for guests. Ignored for authenticated users.
+          example: Олена
+
+    Feedback:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 672a1b2c3d4e5f6789012346
+        good:
+          type: string
+          example: 672a1b2c3d4e5f6789012345
+        author:
+          type: string
+          nullable: true
+          description: User ID, null for guests
+          example: 672a1b2c3d4e5f67890123a1
+        authorName:
+          type: string
+          example: Олена Коваль
+        rating:
+          type: integer
+          example: 5
+        text:
+          type: string
+          example: Great product, highly recommend!
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: Invalid goodId
     # -------------------------
     # ORDER ITEM
     # -------------------------

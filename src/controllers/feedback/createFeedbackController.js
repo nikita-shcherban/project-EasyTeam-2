@@ -3,10 +3,14 @@ import createHttpError from 'http-errors';
 import { Feedback } from '../../models/feedback.js';
 import { Good } from '../../models/good.js';
 
+const getDisplayName = (user) => {
+  const fullName = [user.name, user.surname].filter(Boolean).join(' ');
+  return fullName || user.username;
+};
+
 export const createFeedback = async (req, res) => {
   const { goodId } = req.params;
   const { rating, text, authorName } = req.body;
-  const author = req.user?._id || null;
 
   if (!mongoose.Types.ObjectId.isValid(goodId)) {
     throw createHttpError(400, 'Invalid goodId');
@@ -18,14 +22,26 @@ export const createFeedback = async (req, res) => {
     throw createHttpError(404, 'Good not found');
   }
 
-  if (!req.user && !authorName?.trim()) {
-    throw createHttpError(400, 'Guest name is required');
+  let author = null;
+  let finalAuthorName;
+
+  if (req.user) {
+    author = req.user._id;
+    finalAuthorName = getDisplayName(req.user);
+  } else {
+    const guestName = authorName?.trim();
+
+    if (!guestName) {
+      throw createHttpError(400, 'Guest name is required');
+    }
+
+    finalAuthorName = `Гість ${guestName}`;
   }
 
   const feedback = await Feedback.create({
     good: goodId,
     author,
-    authorName: author ? undefined : `Гість ${authorName}`,
+    authorName: finalAuthorName,
     rating,
     text,
   });
