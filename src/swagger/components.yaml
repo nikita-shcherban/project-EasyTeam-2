@@ -3,7 +3,7 @@ components:
     # -------------------------
     # GOOD
     # -------------------------
-     Good:
+    Good:
       type: object
       properties:
         _id:
@@ -471,6 +471,7 @@ components:
           format: password
           minLength: 8
           example: Password123
+
     LoginRequest:
       type: object
       required:
