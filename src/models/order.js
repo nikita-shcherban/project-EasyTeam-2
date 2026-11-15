@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import { Counter } from '../utils/counter.js';
 
 export const ORDER_SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -60,6 +61,11 @@ const orderItemSchema = new Schema(
 
 const orderSchema = new Schema(
   {
+    orderNumber: {
+      type: String,
+      trim: true,
+    },
+
     firstName: {
       type: String,
       required: [true, 'First name is required'],
@@ -116,12 +122,14 @@ const orderSchema = new Schema(
       type: Number,
       min: 0,
       default: 0, // по тз крч 0 надо, хз чего
+      set: roundMoney,
     },
 
     totalPrice: {
       type: Number,
       required: true,
       min: 0,
+      set: roundMoney,
     },
 
     status: {
@@ -149,7 +157,27 @@ const orderSchema = new Schema(
 
 // мои заказики от новых к старым
 orderSchema.index({ userId: 1, createdAt: -1 });
+// уникальный номер, но старые заказы без номера не конфликтуют
+orderSchema.index(
+  { orderNumber: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { orderNumber: { $type: 'string' } },
+  },
+);
+// номер генерируем в save, то есть после успешной валидации:
+// если заказ не прошёл валидацию, номер из счётчика не сгорает
+orderSchema.pre('save', async function () {
+  if (!this.isNew || this.orderNumber) return;
 
+  const counter = await Counter.findOneAndUpdate(
+    { _id: 'order' },
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true },
+  );
+
+  this.orderNumber = `#${String(counter.seq).padStart(6, '0')}`;
+});
 // тут крч эта штука будет сама пересчитывать totalPrice при валидации
 orderSchema.pre('validate', function () {
   if (Array.isArray(this.items) && this.items.length > 0) {

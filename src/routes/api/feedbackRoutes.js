@@ -95,9 +95,18 @@ router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
  * /api/{goodId}/feedbacks:
  *   post:
  *     summary: Create feedback for a good
- *     description: Creates a new feedback for the specified good. Authentication is optional. Unauthenticated users must provide authorName.
+ *     description: |
+ *       Creates a new feedback for the specified good. Authentication is optional.
+ *
+ *       - **Authenticated user:** `authorName` is set automatically from the profile
+ *         (name and surname, or `username`). The `authorName` value from the request body is ignored.
+ *       - **Guest:** `authorName` is required and is saved as `Гість <authorName>`.
+ *     operationId: createFeedback
  *     tags:
  *       - Feedbacks
+ *     security:
+ *       - {}
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: goodId
@@ -113,6 +122,18 @@ router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/CreateFeedbackRequest'
+ *           examples:
+ *             authorized:
+ *               summary: Authenticated user
+ *               value:
+ *                 rating: 5
+ *                 text: Great product, highly recommend!
+ *             guest:
+ *               summary: Guest
+ *               value:
+ *                 rating: 4
+ *                 text: Good, but delivery was slow
+ *                 authorName: Олена
  *     responses:
  *       201:
  *         description: Feedback successfully created
@@ -131,10 +152,40 @@ router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
  *                   $ref: '#/components/schemas/Feedback'
  *       400:
  *         description: Invalid goodId, validation error, or missing guest name
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               invalidId:
+ *                 value:
+ *                   status: 400
+ *                   message: Invalid goodId
+ *               guestName:
+ *                 value:
+ *                   status: 400
+ *                   message: Guest name is required
+ *       401:
+ *         description: Cookie provided but session is invalid or user not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Good not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               status: 404
+ *               message: Good not found
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post(
   '/api/:goodId/feedbacks',
