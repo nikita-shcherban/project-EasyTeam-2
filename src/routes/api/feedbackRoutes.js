@@ -14,79 +14,86 @@ const router = Router();
  * @swagger
  * /api/feedbacks:
  *   get:
- *     summary: Get all feedbacks
- *     description: Returns a paginated list of feedbacks with optional filtering by good and category.
+ *     summary: Get feedbacks list
+ *     description: |
+ *       Returns a paginated list of feedbacks. Public endpoint, no authentication required.
+ *
+ *       Filters can be combined: `goodId` returns feedbacks for one good,
+ *       `category` returns feedbacks for all goods of the category.
+ *       Invalid `page` and `limit` values are not rejected: they are replaced
+ *       with defaults (`page` = 1, `limit` = 10) and `limit` is capped at 50.
+ *     operationId: getFeedbacks
  *     tags:
  *       - Feedbacks
  *     parameters:
  *       - in: query
  *         name: page
+ *         description: Page number
  *         schema:
  *           type: integer
  *           minimum: 1
  *           default: 1
- *         description: Page number
- *         example: 1
  *       - in: query
  *         name: limit
+ *         description: Items per page (max 50)
  *         schema:
  *           type: integer
  *           minimum: 1
  *           maximum: 50
  *           default: 10
- *         description: Number of feedbacks per page
- *         example: 10
  *       - in: query
  *         name: goodId
+ *         description: Filter by good (MongoDB ObjectId)
  *         schema:
  *           type: string
  *           pattern: '^[0-9a-fA-F]{24}$'
- *         description: Filter feedbacks by good ID
- *         example: 672a1b2c3d4e5f6789012345
+ *           example: 672a1b2c3d4e5f6789012345
  *       - in: query
  *         name: category
+ *         description: Filter by category of the good (MongoDB ObjectId)
  *         schema:
  *           type: string
  *           pattern: '^[0-9a-fA-F]{24}$'
- *         description: Filter feedbacks by category ID
- *         example: 672a1b2c3d4e5f6789012348
+ *           example: 672a1b2c3d4e5f6789012399
  *       - in: query
  *         name: sort
+ *         description: Sort field. Prefix `-` means descending order.
  *         schema:
  *           type: string
- *           enum:
- *             - createdAt
- *             - -createdAt
- *             - rating
- *             - -rating
+ *           enum: [createdAt, -createdAt, rating, -rating]
  *           default: -createdAt
- *         description: Sort feedbacks by creation date or rating. Use minus sign for descending order.
- *         example: -createdAt
  *     responses:
  *       200:
- *         description: Feedbacks successfully retrieved
+ *         description: Feedbacks list with pagination
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               required:
- *                 - success
- *                 - data
- *                 - pagination
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Feedback'
- *                 pagination:
- *                   $ref: '#/components/schemas/Pagination'
+ *               $ref: '#/components/schemas/FeedbackListResponse'
  *       400:
  *         description: Invalid goodId, category or sort field
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               invalidGoodId:
+ *                 value:
+ *                   status: 400
+ *                   message: Invalid goodId
+ *               invalidCategory:
+ *                 value:
+ *                   status: 400
+ *                   message: Invalid category
+ *               invalidSort:
+ *                 value:
+ *                   status: 400
+ *                   message: Invalid sort field
  *       500:
- *         description: Internal server error
+ *         description: Failed to fetch feedbacks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get('/api/feedbacks', celebrate(getFeedbacksValidation), getFeedbacks);
 

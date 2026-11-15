@@ -36,4 +36,6 @@ const feedbackSchema = new Schema(
   },
 );
 
+feedbackSchema.index({ good: 1, createdAt: -1 });
+
 export const Feedback = model('Feedback', feedbackSchema);
