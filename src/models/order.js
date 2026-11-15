@@ -176,7 +176,7 @@ orderSchema.pre('save', async function () {
     { new: true, upsert: true },
   );
 
-  this.orderNumber = `ORD-${String(counter.seq).padStart(6, '0')}`;
+  this.orderNumber = `#${String(counter.seq).padStart(6, '0')}`;
 });
 // тут крч эта штука будет сама пересчитывать totalPrice при валидации
 orderSchema.pre('validate', function () {

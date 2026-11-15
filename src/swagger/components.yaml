@@ -178,6 +178,11 @@ components:
         _id:
           type: string
           example: 673a12345678901234567894
+      orderNumber:
+          type: string
+          readOnly: true
+          description: Автоматически сгенерированный номер заказа
+          example: #000123
         firstName:
           type: string
           minLength: 2
