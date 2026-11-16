@@ -29,12 +29,15 @@ export const createFeedback = async (req, res) => {
     author = req.user._id;
     finalAuthorName = getDisplayName(req.user);
   } else {
-    const guestName = authorName?.trim();
-
+    const guestName = authorName
+      ?.trim()
+      .replace(/^(Гість\s*)+/i, '')
+      .trim();
+  
     if (!guestName) {
       throw createHttpError(400, 'Guest name is required');
     }
-
+  
     finalAuthorName = `Гість ${guestName}`;
   }
 
