@@ -12,14 +12,85 @@ export const ORDER_STATUSES = [
 
 const PHONE_REGEX = /^\+380\d{9}$/;
 
-// округление до 2 знаков после запятой, чтобы не было проблем с точностью при работе с гуалой
+const FIRST_ORDER_NUMBER = 1235960;
+const ORDER_NUMBER_COUNTER_ID = 'orderNumber';
+
+// Округление стоимости до 2 знаков после запятой
 const roundMoney = (value) => Math.round(value * 100) / 100;
 
+// Отдельная схема счётчика заказов
+const orderCounterSchema = new Schema(
+  {
+    _id: {
+      type: String,
+      required: true,
+    },
+    seq: {
+      type: Number,
+      required: true,
+    },
+  },
+  {
+    versionKey: false,
+  },
+);
+
+const OrderCounter = model('OrderCounter', orderCounterSchema);
+
+// Безопасная генерация уникального номера заказа
+const getNextOrderNumber = async () => {
+  try {
+    // Проверяем, существует ли счётчик.
+    // Если его нет, учитываем последний существующий номер.
+    const lastOrder = await Order.findOne({
+      orderNumber: { $exists: true },
+    })
+      .sort({ orderNumber: -1 })
+      .select('orderNumber')
+      .lean();
+
+    const initialNumber = Math.max(
+      FIRST_ORDER_NUMBER - 1,
+      lastOrder?.orderNumber ?? FIRST_ORDER_NUMBER - 1,
+    );
+
+    await OrderCounter.updateOne(
+      { _id: ORDER_NUMBER_COUNTER_ID },
+      {
+        $setOnInsert: {
+          seq: initialNumber,
+        },
+      },
+      { upsert: true },
+    );
+  } catch (error) {
+    // При одновременном первом создании счётчика
+    // другой запрос мог создать его раньше.
+    if (error.code !== 11000) {
+      throw error;
+    }
+  }
+
+  // Атомарно увеличиваем счётчик.
+  const counter = await OrderCounter.findOneAndUpdate(
+    { _id: ORDER_NUMBER_COUNTER_ID },
+    { $inc: { seq: 1 } },
+    { new: true },
+  );
+
+  if (!counter) {
+    throw new Error('Failed to generate order number');
+  }
+
+  return counter.seq;
+};
+
+// Схема одного товара в заказе
 const orderItemSchema = new Schema(
   {
     goodId: {
       type: Schema.Types.ObjectId,
-      ref: 'Good', // тут крч надо чтоб оно совпадало с моделью товара, чтобы можно было делать populate
+      ref: 'Good',
       required: [true, 'goodId is required'],
     },
 
@@ -58,8 +129,17 @@ const orderItemSchema = new Schema(
   { _id: false },
 );
 
+// Основная схема заказа
 const orderSchema = new Schema(
   {
+    // Уникальный номер заказа
+    orderNumber: {
+      type: Number,
+      unique: true,
+      required: true,
+      index: true,
+    },
+
     firstName: {
       type: String,
       required: [true, 'First name is required'],
@@ -115,7 +195,7 @@ const orderSchema = new Schema(
     deliveryPrice: {
       type: Number,
       min: 0,
-      default: 0, // по тз крч 0 надо, хз чего
+      default: 0,
     },
 
     totalPrice: {
@@ -134,7 +214,7 @@ const orderSchema = new Schema(
       index: true,
     },
 
-    // без акка чудак может замутить заказ, поэтому юзер айдишник не обязателен, но если есть - то будет ссылаться на юзера
+    // Заказ может быть оформлен без авторизации
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -147,11 +227,17 @@ const orderSchema = new Schema(
   },
 );
 
-// мои заказики от новых к старым
+// Индекс для получения заказов пользователя от новых к старым
 orderSchema.index({ userId: 1, createdAt: -1 });
 
-// тут крч эта штука будет сама пересчитывать totalPrice при валидации
-orderSchema.pre('validate', function () {
+// Генерация номера и пересчёт стоимости перед валидацией
+orderSchema.pre('validate', async function () {
+  // Генерируем номер только для нового заказа
+  if (this.isNew && this.orderNumber == null) {
+    this.orderNumber = await getNextOrderNumber();
+  }
+
+  // Пересчитываем общую стоимость
   if (Array.isArray(this.items) && this.items.length > 0) {
     const itemsTotal = this.items.reduce(
       (sum, item) => sum + item.price * item.quantity,
